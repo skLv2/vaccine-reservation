@@ -109,6 +109,19 @@
 
 
 ## AS-IS 조직 (Horizontally-Aligned)
-![asis](https://user-images.githubusercontent.com/90441340/132830653-c2dfeaf0-8591-4db8-a44b-fccce2e8dcd7.jpg)
+![asis](https://user-images.githubusercontent.com/90441340/132832765-2ee6cd26-2841-43cd-b9ab-666664ee2de1.jpg)
 
 ## TO-BE 조직 (Vertically-Aligned)
+![tobe](https://user-images.githubusercontent.com/90441340/132832772-01fe71e5-1545-4f20-a31e-99ab56558371.jpg)
+
+## Event Storming 결과
+* MSAEz 로 모델링한 이벤트스토밍 결과 : http://www.msaez.io/#/storming/T57jg9xOfZNjxno4WWSzRwX0nwG2/e1a691320c2b3a0cdab793ec7b6488dc
+
+### 이벤트 도출
+![event1](https://user-images.githubusercontent.com/90441340/132835649-0ae59e25-46a5-4241-ba14-e56f1da4502b.jpg)
+
+### 부적격 이벤트 탈락
+![event2](https://user-images.githubusercontent.com/90441340/132835320-18abe37d-b751-4858-a5d0-01d774fc9815.jpg)
+
+    - 과정중 도출된 잘못된 도메인 이벤트들을 걸러내는 작업을 수행함
+        - 예약 시 > CustomerAuthenticatied : 고객인증이 완료되어야 승인요청 이벤트가 발생하는 ACID 트랜잭션을 적용이 필요하므로 ReservationPlaced이벤트와 통합하여 처리
