@@ -151,12 +151,13 @@
     - 백신관리자는 백신유형, 수량, 유효기간, 제조일자를 선택후 예약을 완료한다.(ok)
     - 고객은 중간중간 예약 현황을 조회한다. (View-green sticker 의 추가로 ok)
 
-![event6](https://user-images.githubusercontent.com/90441340/132938671-ace48234-2ad0-4b42-b609-b3ab2ae20b7b.jpg)
+![event6](https://user-images.githubusercontent.com/90441340/132939739-07387a65-c451-4f55-be8f-b0404b2c1096.jpg)
+
     - 고객이 예약을 취소할 수 있다. (ok)
     - 예약이 취소되면 백신예약 상태가 변경되고 백신슈형, 유효기간, 제조일자가 초기화되고, 수량이 0으로 바뀐다.(ok)  
 
 ### 비기능 요구사항에 대한 검증
-[event4](https://user-images.githubusercontent.com/90441340/132938193-26503282-64f8-46b4-abf1-5d5c17672070.jpg)
+![event4](https://user-images.githubusercontent.com/90441340/132938193-26503282-64f8-46b4-abf1-5d5c17672070.jpg)
 
 - 마이크로 서비스를 넘나드는 시나리오에 대한 트랜잭션 처리
         - 예약 승인 요청 시 승인처리:  승인이 완료되지 않은 예약은 절대 받지 않는다는 정책에 따라, ACID 트랜잭션 적용. 예약 승인 요청시 승인처리에 대해서는 Request-Response 방식 처리
