@@ -30,7 +30,7 @@
 백신 예약 서비스
 
 기능적 요구사항
-1. 고객이 날짜, 병원을 선택하고 백신 예약 승인 요청을 한다
+1. 고객이 날짜, 병원을 선택하고 백신 예약 승인 요청을 한다.
 2. 요청이 승인되면 백신관리에 전달 된다.
 3. 백신관리에서 백신유형, 백신유효기간, 제조일자, 수량을 확인하고 예약을 완료한다.
 4. 예약이 완료되면 고객의 예약 상태를 완료로 업데이트 한다.
@@ -125,3 +125,49 @@
 
     - 과정중 도출된 잘못된 도메인 이벤트들을 걸러내는 작업을 수행함
         - 예약 시 > CustomerAuthenticatied : 고객인증이 완료되어야 승인요청 이벤트가 발생하는 ACID 트랜잭션을 적용이 필요하므로 ReservationPlaced이벤트와 통합하여 처리
+
+### 액터, 커맨드 부착 및 어그리게잇으로 묶기
+![msaez1](https://user-images.githubusercontent.com/90441340/132937802-c4c2d493-bd1a-4a3a-8995-5f95314f05c0.jpg)
+
+- Customer의 Reservation, Approval의 Approval관리, vaccine의 vaccine관리는 그와 연결된 command 와 event 들에 의하여 트랜잭션이 유지되어야 하는 단위로 그들 끼리 묶어줌
+
+### 바운디드 컨텍스트로 묶기
+![msaez2](https://user-images.githubusercontent.com/90441340/132938090-317ce728-5447-470c-a4cd-05eb67e026ff.jpg)
+
+### 컨텍스트 매핑 (점선은 Pub/Sub, 실선은 Req/Resp)
+![event3](https://user-images.githubusercontent.com/90441340/132938176-528c04f2-7769-4a0e-b899-55328a3860af.jpg)
+
+### 완성된 1차 모형!
+[event4](https://user-images.githubusercontent.com/90441340/132938193-26503282-64f8-46b4-abf1-5d5c17672070.jpg)
+ 
+ - View Model 추가
+
+### 1차 완성본에 대한 기능적/비기능적 요구사항을 커버하는지 검증
+![event5](https://user-images.githubusercontent.com/90441340/132938539-4de24525-7ec8-4b26-91ac-f99fe364a59c.jpg)
+
+    - 고객이 병원, 날짜를 선택하여 예약한다. (ok)
+    - 승인을 받는다. (ok)
+    - 예약승인이 완료되면 예약 내역이 백신관리자에게 전달된다. (ok)
+    - 백신관리자는 백신유형, 수량, 유효기간, 제조일자를 선택후 예약을 완료한다.(ok)
+    - 고객은 중간중간 예약 현황을 조회한다. (View-green sticker 의 추가로 ok)
+
+![event6](https://user-images.githubusercontent.com/90441340/132938671-ace48234-2ad0-4b42-b609-b3ab2ae20b7b.jpg)
+    - 고객이 예약을 취소할 수 있다. (ok)
+    - 예약이 취소되면 백신예약 상태가 변경되고 백신슈형, 유효기간, 제조일자가 초기화되고, 수량이 0으로 바뀐다.(ok)  
+
+### 비기능 요구사항에 대한 검증
+[event4](https://user-images.githubusercontent.com/90441340/132938193-26503282-64f8-46b4-abf1-5d5c17672070.jpg)
+
+- 마이크로 서비스를 넘나드는 시나리오에 대한 트랜잭션 처리
+        - 예약 승인 요청 시 승인처리:  승인이 완료되지 않은 예약은 절대 받지 않는다는 정책에 따라, ACID 트랜잭션 적용. 예약 승인 요청시 승인처리에 대해서는 Request-Response 방식 처리
+        - 승인 완료 시 백신 관리, 예약 완료 및 예약 상태 변경 처리:  승인에서  마이크로서비스로 예약완료내역이 전달되는 과정에 있어서 vaccinemgmt 마이크로 서비스가 별도의 배포주기를 가지기 때문에 Eventual Consistency 방식으로 트랜잭션 처리함.
+        - 나머지 모든 inter-microservice 트랜잭션: 예약상태, 백신상태 등 모든 이벤트에 대해 MyPage처리 등, 데이터 일관성의 시점이 크리티컬하지 않은 모든 경우가 대부분이라 판단, Eventual Consistency 를 기본으로 채택함.
+	- 백신 관리 기능이 수행되지 않더라도 예약 승인은 365일 24시간 받을 수 있어야 한다  Async (event-driven), Eventual Consistency
+        - 승인시스템이 과중되면 사용자를 잠시동안 받지 않고 승인을 잠시후에 하도록 유도한다  Circuit breaker, fallback
+
+## 헥사고날 아키텍처 다이어그램 도출
+![Hex](https://user-images.githubusercontent.com/90441340/132939649-638d8f91-b7a7-41ba-b499-8fdb90e93bef.jpg)
+
+    - Chris Richardson, MSA Patterns 참고하여 Inbound adaptor와 Outbound adaptor를 구분함
+    - 호출관계에서 PubSub 과 Req/Resp 를 구분함
+    - 서브 도메인과 바운디드 컨텍스트의 분리:  각 팀의 KPI 별로 아래와 같이 관심 구현 스토리를 나눠가짐
