@@ -212,6 +212,12 @@
    
    ("ReservationCompleted" 이벤트 발생 시, Pub/Sub 기반으로 별도 테이블에 저장)
    ![image](https://user-images.githubusercontent.com/29780972/132992637-3eac9a68-b14e-4b79-9c79-e95e00f76645.png)
+   
+   
+   ("CancelCompleted" 이벤트 발생 시, Pub/Sub 기반으로 별도 테이블에 저장)
+   ![image](https://user-images.githubusercontent.com/29780972/132993526-6f462911-3825-4271-84f9-9ca62235116b.png)
+
+   
 
 - 실제로 view 페이지를 조회해 보면 모든 room에 대한 정보, 예약 상태, 결제 상태 등의 정보를 종합적으로 알 수 있다.
   
