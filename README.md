@@ -561,7 +561,7 @@ public interface MyPageRepository extends CrudRepository<MyPage, Long> {
 
 실제 MariaDB 접속하여 확인 시, 데이터 확인 가능 (ex. Reservation에서 객실 예약 요청한 경우)
 
-![image](https://user-images.githubusercontent.com/29780972/132993396-200c86be-087a-4bdb-81c1-78661d6c1afe.png)
+![image](https://user-images.githubusercontent.com/29780972/132993463-ab6d81b5-0d03-4a44-b922-7cb7e5cf023f.png)
 
 
 
