@@ -416,10 +416,16 @@ public interface ReservationRepository extends PagingAndSortingRepository<Reserv
 
 ```
 #reservation 서비스의 백신 예약 요청
+http POST http://localhost:8088/reservations customerid=OHM hospitalid=123 date=20210910
 
-#vaccinemgmt 서비스의 백신 매핑
+#reservation 서비스의 백신 취소 요청
+http PATCH http://localhost:8088/reservations/1 status=CANCEL_REQUESTED
 
 #reservation 서비스의 백신 예약 상태 및 백신 종류 확인
+http GET http://localhost:8088/reservations
+
+#vaccineMgmts 서비스의 및 유통기한등 백신 정보 확인
+http GET http://localhost:8088/vaccineMgmts   
 ```
 
 
@@ -482,10 +488,21 @@ public interface ApprovalService {
 
 # 예약 요청  - Fail
 
+http POST http://localhost:8088/reservations customerid=OHM hospitalid=123 date=20210910
+
+![image](https://user-images.githubusercontent.com/29780972/133050695-e81902a6-838c-4373-a628-9eea14bc9753.png)
+
+
 # 결제서비스 재기동
+cd approvals
+mvn spring-boot:run
 
 
 # 예약 요청  - Success
+
+http POST http://localhost:8088/reservations customerid=OHM hospitalid=123 date=20210910
+
+![image](https://user-images.githubusercontent.com/29780972/133050824-fd9f857b-e22b-45bd-948f-f4dcf4223133.png)
 
 ```
 
@@ -562,10 +579,15 @@ public class PolicyHandler{
 # 백신관리 서비스 (vaccineMgmt) 를 잠시 내려놓음 (ctrl+c)
 
 # 예약 요청  - Success
-   
+http POST http://localhost:8088/reservations customerid=OHM hospitalid=123 date=20210910
+![image](https://user-images.githubusercontent.com/29780972/133051128-ec32ffd9-4c8e-4be7-a5a9-93638d3af1a8.png)
+
 
 # 예약 상태 확인  - vaccineMgmt 서비스와 상관없이 예약 상태는 정상 확인
 http GET http://localhost:8088/reservations
+![image](https://user-images.githubusercontent.com/29780972/133051194-269034b4-2d0c-4d11-8b88-638a851b8390.png)
+
+http://localhost:8081/reservations/3은 id=2와 달리 "status": "RSV_REQUESTED" 에서 끝난것을 확인
 ```
 
 ## 폴리글랏 퍼시스턴스
