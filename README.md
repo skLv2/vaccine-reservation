@@ -245,12 +245,52 @@ vaccinereservation 프로젝트에서는 PolicyHandler에서 처리 시 어떤 �
 확인할 수 있습니다.
 
 - 백신 예약 요청
+http POST http://localhost:8088/reservations customerid=OHM hospitalid=123 date=20210910
+![image](https://user-images.githubusercontent.com/29780972/133015614-0f9e7fa9-5640-4781-a7c7-76c822b27862.png)
+
+"status": "RSV_REQUESTED" 확인
+
 
 - 예약 후 - 승인 상태
+http GET http://localhost:8088/approvals  
+
+![image](https://user-images.githubusercontent.com/29780972/133015696-5040a152-d1d8-4802-8fed-845eebed088d.png)
+
+"status": "APV_COMPLETED" 확인
+
 - 예약 및 승인 완료 후 - 백신 관리 상태
+http GET http://localhost:8088/vaccineMgmts      
+![image](https://user-images.githubusercontent.com/29780972/133015768-bde17c64-2505-471e-ae37-9d7e1355f48e.png)
+
+reservationID 에 맞춰 백신종류, 수량, 유통기한 등 매핑 확인
+
 - 예약 및 승인 완료 후 백신 관리까지 끝난 후 - 예약 상태
+http GET http://localhost:8088/reservations
+![image](https://user-images.githubusercontent.com/29780972/133015883-05b0af2e-7cad-49c9-a28f-67260e739225.png)
+
+
+"status": "Reservation Completed" 확인
+ -> 정상적으로 백신 예약이 완료 된 경우 최종 상태가 Reservaiton Completed
+
 - 예약 취소
+http PATCH http://localhost:8088/reservations/1 status=CANCEL_REQUESTED
+![image](https://user-images.githubusercontent.com/29780972/133016556-cef0467c-a654-4587-aca8-96cd0988069f.png)
+
+"status": "CANCEL_REQUESTED" 확인
+
+- 취소 후 - 백신 상태
+http GET http://localhost:8088/vaccineMgmts    
+![image](https://user-images.githubusercontent.com/29780972/133016651-286a33bb-4f4d-4621-bb30-47e9147bf032.png)
+
+취소 요청한 ID에 따라 수량 0으로 변함 및 백신 종류 등 NULL로 설정 변함 확인
+
 - 취소 후 - 예약 상태
+http GET http://localhost:8088/reservations       
+![image](https://user-images.githubusercontent.com/29780972/133016914-acdd2c05-ec7d-4d1d-ac7d-e4ec6ab3a356.png)
+
+"status": "Reservation Canceled" 
+
+
 
 
 ## DDD 의 적용
