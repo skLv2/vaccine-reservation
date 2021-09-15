@@ -1,0 +1,54 @@
+{
+    "configurations": [
+        {
+            "type": "java",
+            "name": "Spring Boot-ApprovalApplication<approval>",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "console": "internalConsole",
+            "mainClass": "vaccinereservation.ApprovalApplication",
+            "projectName": "approval",
+            "args": ""
+        },
+        {
+            "type": "java",
+            "name": "Spring Boot-Application<boot-camp-gateway>",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "console": "internalConsole",
+            "mainClass": "com.example.Application",
+            "projectName": "boot-camp-gateway",
+            "args": ""
+        },
+        {
+            "type": "java",
+            "name": "Spring Boot-MypageApplication<mypage>",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "console": "internalConsole",
+            "mainClass": "vaccinereservation.MypageApplication",
+            "projectName": "mypage",
+            "args": ""
+        },
+        {
+            "type": "java",
+            "name": "Spring Boot-ReservationApplication<reservation>",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "console": "internalConsole",
+            "mainClass": "vaccinereservation.ReservationApplication",
+            "projectName": "reservation",
+            "args": ""
+        },
+        {
+            "type": "java",
+            "name": "Spring Boot-VaccinemgmtApplication<vaccinemgmt>",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "console": "internalConsole",
+            "mainClass": "vaccinereservation.VaccinemgmtApplication",
+            "projectName": "vaccinemgmt",
+            "args": ""
+        }
+    ]
+}
