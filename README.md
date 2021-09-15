@@ -602,8 +602,9 @@ http://localhost:8081/reservations/3은 id=2와 달리 "status": "RSV_REQUESTED"
 
 ## 폴리글랏 퍼시스턴스
 
-viewPage 는 RDB 계열의 데이터베이스인 Maria DB 를 사용하기로 하였다. 
-별다른 작업없이 기존의 Entity Pattern 과 Repository Pattern 적용과 데이터베이스 관련 설정 (pom.xml, application.yml) 만으로 Maria DB 에 부착시켰다.
+viewPage 는 H2가 아닌 RDB 계열의 데이터베이스인 Maria DB 를 사용하기로 하였다. 
+기존의 Entity Pattern 과 Repository Pattern 적용과 데이터베이스 관련 설정 (pom.xml, application.yml) 을 변경하였으며, mypage pom.xml에 maria DB 의존성을 추가 하였다.
+위 작업을 통해 maria DB를 부착하였으며 아래와 같이 작업 진행됨을 확인할 수 있다.
 
 ```
 #MyPage.java
