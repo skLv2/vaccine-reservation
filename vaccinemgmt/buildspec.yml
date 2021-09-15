@@ -2,7 +2,7 @@ version: 0.2
 
 env:
   variables:
-    _PROJECT_NAME: "user02-vaccine"
+    _PROJECT_NAME: "vaccinemgmt"
     _DIR_NAME: "vaccinemgmt"
     _NAMESPACE: "vaccines"
 
