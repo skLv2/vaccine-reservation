@@ -1,11 +1,11 @@
-version: 0.1
-​
+version: 0.2
+
 env:
   variables:
     _PROJECT_NAME: "user02-vaccine"
     _DIR_NAME: "vaccinemgmt"
     _NAMESPACE: "vaccines"
-​
+
 phases:
   install:
     runtime-versions:
