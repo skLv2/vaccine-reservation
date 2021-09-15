@@ -174,6 +174,7 @@
     - 서브 도메인과 바운디드 컨텍스트의 분리:  각 팀의 KPI 별로 아래와 같이 관심 구현 스토리를 나눠가짐
 
 
+
 ## 구현:
 분석/설계 단계에서 도출된 헥사고날 아키텍처에 따라, 각 BC별로 대변되는 마이크로 서비스들을 스프링부트로 구현하였다. 구현한 각 서비스를 로컬에서 실행하는 방법은 아래와 같다 (각자의 포트넘버는 8081 ~ 808n 이다)
 ```
@@ -415,10 +416,16 @@ public interface ReservationRepository extends PagingAndSortingRepository<Reserv
 
 ```
 #reservation 서비스의 백신 예약 요청
+http POST http://localhost:8088/reservations customerid=OHM hospitalid=123 date=20210910
 
-#vaccinemgmt 서비스의 백신 매핑
+#reservation 서비스의 백신 취소 요청
+http PATCH http://localhost:8088/reservations/1 status=CANCEL_REQUESTED
 
 #reservation 서비스의 백신 예약 상태 및 백신 종류 확인
+http GET http://localhost:8088/reservations
+
+#vaccineMgmts 서비스의 및 유통기한등 백신 정보 확인
+http GET http://localhost:8088/vaccineMgmts   
 ```
 
 
@@ -478,15 +485,30 @@ public interface ApprovalService {
 
 ```
 # 승인 (approval) 서비스를 잠시 내려놓음 (ctrl+c)
-
+```
+```
 # 예약 요청  - Fail
 
-# 결제서비스 재기동
+http POST http://localhost:8088/reservations customerid=OHM hospitalid=123 date=20210910
+```
 
-
-# 예약 요청  - Success
+![image](https://user-images.githubusercontent.com/29780972/133050695-e81902a6-838c-4373-a628-9eea14bc9753.png)
 
 ```
+# 결제서비스 재기동
+cd approvals
+mvn spring-boot:run
+```
+
+```
+# 예약 요청  - Success
+
+http POST http://localhost:8088/reservations customerid=OHM hospitalid=123 date=20210910
+
+```
+
+![image](https://user-images.githubusercontent.com/29780972/133050824-fd9f857b-e22b-45bd-948f-f4dcf4223133.png)
+
 
 - 또한 과도한 요청시에 서비스 장애가 도미노 처럼 벌어질 수 있다. (서킷브레이커 처리는 운영단계에서 설명한다.)
 
@@ -559,18 +581,30 @@ public class PolicyHandler{
 
 ```
 # 백신관리 서비스 (vaccineMgmt) 를 잠시 내려놓음 (ctrl+c)
+```
 
+```
 # 예약 요청  - Success
-   
+http POST http://localhost:8088/reservations customerid=OHM hospitalid=123 date=20210910
+```
 
+![image](https://user-images.githubusercontent.com/29780972/133051128-ec32ffd9-4c8e-4be7-a5a9-93638d3af1a8.png)
+
+```
 # 예약 상태 확인  - vaccineMgmt 서비스와 상관없이 예약 상태는 정상 확인
 http GET http://localhost:8088/reservations
 ```
 
+![image](https://user-images.githubusercontent.com/29780972/133051194-269034b4-2d0c-4d11-8b88-638a851b8390.png)
+
+http://localhost:8081/reservations/3은 id=2와 달리 "status": "RSV_REQUESTED" 에서 끝난것을 확인
+
+
 ## 폴리글랏 퍼시스턴스
 
-viewPage 는 RDB 계열의 데이터베이스인 Maria DB 를 사용하기로 하였다. 
-별다른 작업없이 기존의 Entity Pattern 과 Repository Pattern 적용과 데이터베이스 관련 설정 (pom.xml, application.yml) 만으로 Maria DB 에 부착시켰다.
+viewPage 는 H2가 아닌 RDB 계열의 데이터베이스인 Maria DB 를 사용하기로 하였다. 
+기존의 Entity Pattern 과 Repository Pattern 적용과 데이터베이스 관련 설정 (pom.xml, application.yml) 을 변경하였으며, mypage pom.xml에 maria DB 의존성을 추가 하였다.
+위 작업을 통해 maria DB를 부착하였으며 아래와 같이 작업 진행됨을 확인할 수 있다.
 
 ```
 #MyPage.java
