@@ -63,5 +63,5 @@ spring:
           destination: vaccinereservation
           contentType: application/json
 prop:
-  room:
+  aprv:
     url: ${apiurl}
