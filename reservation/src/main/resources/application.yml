@@ -1,8 +1,6 @@
 server:
   port: 8080
-
 ---
-
 spring:
   profiles: default
   jpa:
@@ -31,20 +29,16 @@ spring:
         event-out:
           destination: vaccinereservation
           contentType: application/json
-
 logging:
   level:
     org.hibernate.type: trace
     org.springframework.cloud: debug
-
 prop:
   aprv:
     url: http://localhost:8084
-
 server:
   port: 8081
 ---
-
 spring:
   profiles: docker
   cloud:
@@ -68,3 +62,6 @@ spring:
         event-out:
           destination: vaccinereservation
           contentType: application/json
+prop:
+  room:
+    url: ${apiurl}
