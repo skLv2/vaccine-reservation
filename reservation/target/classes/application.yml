@@ -68,3 +68,8 @@ spring:
         event-out:
           destination: vaccinereservation
           contentType: application/json
+
+prop:
+  room:
+    url: ${apiurl}
+

@@ -4,7 +4,7 @@ env:
   variables:
     _PROJECT_NAME: "vaccinemgmt"
     _DIR_NAME: "vaccinemgmt"
-  #  _NAMESPACE: "vaccines"
+    _NAMESPACE: "vaccines"
 
 phases:
   install:
