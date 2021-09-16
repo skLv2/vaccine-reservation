@@ -662,3 +662,131 @@ public interface MyPageRepository extends CrudRepository<MyPage, Long> {
 # 운영
 
 ## CI/CD 설정
+각 구현체들은 각자의 source repository 에 구성되었고, 사용한 CI/CD 플랫폼은 AWS를 사용하였으며, pipeline build script 는 각 프로젝트 폴더 이하 buildspec.yml 에 포함되었다.
+
+AWS CodeBuild 적용 현황
+![1](https://user-images.githubusercontent.com/88864503/133553458-2ecf1f10-3c01-4b3d-bcaa-84f268f7848a.JPG)
+
+webhook을 통한 CI 확인
+![2](https://user-images.githubusercontent.com/88864503/133553865-81afb01b-dbec-4167-bac9-c8fd62ea5718.JPG)
+
+AWS ECR 적용 현황
+![3](https://user-images.githubusercontent.com/88864503/133553933-30d2ba69-ec96-4b26-838b-33e2d061bb70.JPG)
+
+EKS에 배포된 내용
+![4](https://user-images.githubusercontent.com/88864503/133554057-b6c08a0a-04ce-4dd5-bc47-f01e9776373d.JPG)
+POST 결과
+![image (3)](https://user-images.githubusercontent.com/90441340/133559842-6a03776f-5e1b-465e-8bea-eabf1384b45c.png)
+
+GET 결과
+![image](https://user-images.githubusercontent.com/90441340/133559721-ba7d924b-76eb-4a97-b4b5-2d3c97e1771a.png)
+![image (1)](https://user-images.githubusercontent.com/90441340/133559794-7fa37299-5368-42f2-8775-7b9e1dbc65b8.png)
+![image (2)](https://user-images.githubusercontent.com/90441340/133559797-f0942cec-0275-4c60-b0b7-7412a3a7d088.png)
+
+
+## ConfigMap 설정
+
+
+ 동기 호출 URL을 ConfigMap에 등록하여 사용
+
+
+ kubectl apply -f configmap
+
+```
+ apiVersion: v1
+ kind: ConfigMap
+ metadata:
+   name: vaccine-configmap
+   namespace: vaccines
+ data:
+   apiurl: "http://user02-gateway:8080"
+
+```
+buildspec 수정
+
+```
+              spec:
+                containers:
+                  - name: $_PROJECT_NAME
+                    image: $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$_PROJECT_NAME:$CODEBUILD_RESOLVED_SOURCE_VERSION
+                    ports:
+                      - containerPort: 8080
+                    env:
+                    - name: apiurl
+                      valueFrom:
+                        configMapKeyRef:
+                          name: vaccine-configmap
+                          key: apiurl 
+                        
+```            
+application.yml 수정
+```
+prop:
+  aprv:
+    url: ${apiurl}
+``` 
+
+동기 호출 URL 실행
+![5](https://user-images.githubusercontent.com/88864503/133554760-b8d8b524-ebbf-46dc-ba32-1820cffcc023.JPG)
+
+## 무정지 재배포
+
+* 먼저 무정지 재배포가 100% 되는 것인지 확인하기 위해서 Autoscaler 이나 CB 설정을 제거함
+
+- seige 로 배포작업 직전에 워크로드를 모니터링 함.
+```
+siege -c100 -t10S -v --content-type "application/json" 'http://af9a234af8e354f5299f1d049a1b21c0-1150269307.ap-northeast-1.elb.amazonaws.com:8080/reservations
+
+```
+
+```
+# buildspec.yaml 의 readiness probe 의 설정:
+
+                    readinessProbe:
+                      httpGet:
+                        path: /actuator/health
+                        port: 8080
+                      initialDelaySeconds: 10
+                      timeoutSeconds: 2
+                      periodSeconds: 5
+                      failureThreshold: 10
+```
+
+Customer 서비스 신규 버전으로 배포
+![9](https://user-images.githubusercontent.com/88864503/133559167-4a2ede3c-ad33-43b6-b101-8759d56dd0c4.png)
+
+
+배포기간 동안 Availability 가 변화없기 때문에 무정지 재배포가 성공한 것으로 확인됨.
+
+## Liveness Probe
+
+테스트를 위해 buildspec.yml을 아래와 같이 수정 후 배포
+
+```
+livenessProbe:
+                      # httpGet:
+                      #   path: /actuator/health
+                      #   port: 8080
+                      exec:
+                        command:
+                        - cat
+                        - /tmp/healthy
+```
+
+
+![6](https://user-images.githubusercontent.com/88864503/133556583-3315fae7-de8a-4882-ad1d-8493fbd2daa8.png)
+
+pod 상태 확인
+ 
+ kubectl describe ~ 로 pod에 들어가서 아래 메시지 확인
+ ```
+ Warning  Unhealthy  26s (x2 over 31s)     kubelet            Liveness probe failed: cat: /tmp/healthy: No such file or directory
+ ```
+
+/tmp/healthy 파일 생성
+```
+kubectl exec -it pod/reservation-5576944554-q8jwf -n vaccines -- touch /tmp/healthy
+```
+![7](https://user-images.githubusercontent.com/88864503/133556724-7693dec2-41dd-430c-a3d3-389cc309bfca.png)
+
+성공 확인
