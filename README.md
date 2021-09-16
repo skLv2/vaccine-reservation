@@ -675,6 +675,7 @@ AWS ECR 적용 현황
 
 EKS에 배포된 내용
 ![4](https://user-images.githubusercontent.com/88864503/133554057-b6c08a0a-04ce-4dd5-bc47-f01e9776373d.JPG)
+
 POST 결과
 ![image (3)](https://user-images.githubusercontent.com/90441340/133559842-6a03776f-5e1b-465e-8bea-eabf1384b45c.png)
 
