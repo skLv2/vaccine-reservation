@@ -668,7 +668,7 @@ AWS CodeBuild 적용 현황
 ![1](https://user-images.githubusercontent.com/88864503/133553458-2ecf1f10-3c01-4b3d-bcaa-84f268f7848a.JPG)
 
 webhook을 통한 CI 확인
-![2](https://user-images.githubusercontent.com/88864503/133553865-81afb01b-dbec-4167-bac9-c8fd62ea5718.JPG)
+![image (4)](https://user-images.githubusercontent.com/90441340/133560216-eeecca1e-5376-48f7-bd85-23bf4bfda961.png)
 
 AWS ECR 적용 현황
 ![3](https://user-images.githubusercontent.com/88864503/133553933-30d2ba69-ec96-4b26-838b-33e2d061bb70.JPG)
